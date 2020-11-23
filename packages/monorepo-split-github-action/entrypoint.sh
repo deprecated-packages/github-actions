@@ -36,25 +36,27 @@ then
     git config --global user.name "$USER_NAME"
 fi
 
+WORKDIR="$(pwd)"
+
 CLONE_DIR=$(mktemp -d)
 CLONED_REPOSITORY="https://github.com/$SPLIT_REPOSITORY_ORGANIZATION/$SPLIT_REPOSITORY_NAME.git"
-note "Cloning '$CLONED_REPOSITORY' repository "
+note "Cloning '$CLONED_REPOSITORY' repository"
 
-# clone repository
+# clone previous version of split repository
 git clone -- "https://$GITHUB_TOKEN@github.com/$SPLIT_REPOSITORY_ORGANIZATION/$SPLIT_REPOSITORY_NAME.git" "$CLONE_DIR"
-ls -la "$CLONE_DIR"
-
-note "Cleaning destination repository of old files"
-
-# Copy files into the git and deletes all git
-find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
-ls -la "$CLONE_DIR"
-
-note "Copying contents to git repo"
-
-cp -r "$PACKAGE_DIRECTORY"/* "$CLONE_DIR"
 cd "$CLONE_DIR"
 ls -la
+
+# delete all files first (to handle deletions)
+note "Cleaning destination repository of old files"
+git rm -r
+ls -la
+
+note "Copying contents to git repo"
+# Must restore workdir, as PACKAGE_DIRECTORY is likely relative path
+cd "$WORKDIR"
+cp -r "$PACKAGE_DIRECTORY"/{.??*,*} "$CLONE_DIR"
+ls -la "$CLONE_DIR"
 
 note "Adding git commit"
 
