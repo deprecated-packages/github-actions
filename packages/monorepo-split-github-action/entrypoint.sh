@@ -48,7 +48,7 @@ ls -la "$CLONE_DIR"
 note "Cleaning destination repository of old files"
 
 # Copy files into the git and deletes all git
-find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git$" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
+find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
 ls -la "$CLONE_DIR"
 
 if test ! -z "$COMMIT_MESSAGE"
