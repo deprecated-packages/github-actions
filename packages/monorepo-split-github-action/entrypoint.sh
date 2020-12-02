@@ -61,7 +61,9 @@ fi
 
 note "Copying contents to git repo"
 
-cp -r "$PACKAGE_DIRECTORY"/* "$CLONE_DIR"
+# copy the package directory including all hidden files to the clone dir
+# make sure the source dir ends with `/.` so that all contents are copied (including .github etc)
+cp -Ra $PACKAGE_DIRECTORY/. "$CLONE_DIR"
 cd "$CLONE_DIR"
 ls -la
 
