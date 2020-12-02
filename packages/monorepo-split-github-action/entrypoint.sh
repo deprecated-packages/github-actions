@@ -38,6 +38,7 @@ then
 fi
 
 CLONE_DIR=$(mktemp -d)
+TARGET_DIR=$(mktemp -d)
 CLONED_REPOSITORY="https://github.com/$SPLIT_REPOSITORY_ORGANIZATION/$SPLIT_REPOSITORY_NAME.git"
 note "Cloning '$CLONED_REPOSITORY' repository "
 
@@ -47,12 +48,11 @@ ls -la "$CLONE_DIR"
 
 note "Cleaning destination repository of old files"
 
-# Deletes the contents of $CLONE_DIR with three exceptions (! -path "..."):
-# -Skips the $CLONE_DIR/ directory itself
-# -Skips the contents of $CLONE_DIR/.git/*
-# -Skips the $CLONE_DIR/.git
-find "$CLONE_DIR/" ! -path "$CLONE_DIR/" ! -path "$CLONE_DIR/.git/*"  ! -path "$CLONE_DIR/.git" -exec rm -rf {} \;
-ls -la "$CLONE_DIR"
+# We're only interested in the .git directory, move it to $TARGET_DIR and use it from now on.
+mv "$CLONE_DIR/.git" "$TARGET_DIR/.git"
+rm -rf $CLONE_DIR
+
+ls -la "$TARGET_DIR"
 
 if test ! -z "$COMMIT_MESSAGE"
 then
@@ -66,11 +66,11 @@ note "Copying contents to git repo"
 
 # copy the package directory including all hidden files to the clone dir
 # make sure the source dir ends with `/.` so that all contents are copied (including .github etc)
-cp -Ra $PACKAGE_DIRECTORY/. "$CLONE_DIR"
+cp -Ra $PACKAGE_DIRECTORY/. "$TARGET_DIR"
 
 note "Files that will be pushed"
 
-cd "$CLONE_DIR"
+cd "$TARGET_DIR"
 ls -la
 
 note "Adding git commit"
