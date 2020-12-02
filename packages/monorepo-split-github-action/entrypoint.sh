@@ -51,6 +51,14 @@ note "Cleaning destination repository of old files"
 find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
 ls -la "$CLONE_DIR"
 
+if test ! -z "$COMMIT_MESSAGE"
+then
+    ORIGIN_COMMIT="https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
+    COMMIT_MESSAGE="${COMMIT_MESSAGE/ORIGIN_COMMIT/$ORIGIN_COMMIT}"
+else
+    COMMIT_MESSAGE=$(git show -s --format=%B "$GITHUB_SHA")
+fi
+
 note "Copying contents to git repo"
 
 cp -r "$PACKAGE_DIRECTORY"/* "$CLONE_DIR"
@@ -58,9 +66,6 @@ cd "$CLONE_DIR"
 ls -la
 
 note "Adding git commit"
-
-ORIGIN_COMMIT="https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
-COMMIT_MESSAGE="${COMMIT_MESSAGE/ORIGIN_COMMIT/$ORIGIN_COMMIT}"
 
 git add .
 git status
