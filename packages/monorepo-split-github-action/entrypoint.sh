@@ -47,8 +47,11 @@ ls -la "$CLONE_DIR"
 
 note "Cleaning destination repository of old files"
 
-# Copy files into the git and deletes all git
-find "$CLONE_DIR" | grep -v "^$CLONE_DIR/\.git" | grep -v "^$CLONE_DIR$" | xargs rm -rf # delete all files (to handle deletions)
+# Deletes the contents of $CLONE_DIR with three exceptions (! -path "..."):
+# -Skips the $CLONE_DIR/ directory itself
+# -Skips the contents of $CLONE_DIR/.git/*
+# -Skips the $CLONE_DIR/.git
+find "$CLONE_DIR/" ! -path "$CLONE_DIR/" ! -path "$CLONE_DIR/.git/*"  ! -path "$CLONE_DIR/.git" -exec rm -rf {} \;
 ls -la "$CLONE_DIR"
 
 if test ! -z "$COMMIT_MESSAGE"
@@ -64,6 +67,9 @@ note "Copying contents to git repo"
 # copy the package directory including all hidden files to the clone dir
 # make sure the source dir ends with `/.` so that all contents are copied (including .github etc)
 cp -Ra $PACKAGE_DIRECTORY/. "$CLONE_DIR"
+
+note "Files that will be pushed"
+
 cd "$CLONE_DIR"
 ls -la
 
