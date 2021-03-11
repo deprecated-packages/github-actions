@@ -13,7 +13,7 @@ name: 'Monorepo Split With Tag'
 on:
     push:
         branches:
-            - master
+            - main
 
 jobs:
     monorepo_split_test_with_tag:
@@ -33,7 +33,7 @@ jobs:
                 uses: "WyriHaximus/github-action-get-previous-tag@master"
 
             -
-                uses: "symplify/monorepo-split-github-action@master"
+                uses: "symplify/monorepo-split-github-action@1"
                 env:
                     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
                 with:
