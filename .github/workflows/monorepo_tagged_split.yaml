@@ -32,6 +32,7 @@ jobs:
                     package-directory: 'packages/monorepo-split-github-action'
                     split-repository-organization: 'symplify'
                     split-repository-name: 'monorepo-split-github-action'
+                    branch: "main"
                     user-name: "kaizen-ci"
                     user-email: "info@kaizen-ci.org"
                     tag: ${{ steps.previous_tag.outputs.tag }}
